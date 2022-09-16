@@ -4,18 +4,20 @@ using UnityEngine;
 
 public class PlayFabLogin : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [Header("LOGIN")]
+    private string UserEmailLogin;
+    private string UserPasswordLogin;
+
     public void Start()
     {
         // Tarkistetaan ettei TitleID ole tyhjä eli null
         if (string.IsNullOrEmpty(PlayFabSettings.TitleId))
         {
             // Lisää oma TitleID, jonka löydät PlayFab pilven Game managerista
-            PlayFabSettings.TitleId = "144";
+            PlayFabSettings.TitleId = "404D1";
         }
-        var request = new LoginWithCustomIDRequest { CustomId = "GettingStartedGuide", CreateAccount = true };
-        // Tässä suoritetaan API-kutsu pilvessä olevalla palvelimelle
-        PlayFabClientAPI.LoginWithCustomID(request, OnLoginSuccess, OnLoginFailure);
+        var request = new LoginWithEmailAddressRequest { Email = UserEmailLogin, Password = UserPasswordLogin };
+        PlayFabClientAPI.LoginWithEmailAddress(request, OnLoginSuccess, OnLoginFailure);
     }
     // Tämä metodi suoritetaan jos loggaus onnistuu
     private void OnLoginSuccess(LoginResult result)
@@ -29,5 +31,26 @@ public class PlayFabLogin : MonoBehaviour
         Debug.LogWarning("Something went wrong with your first API call. :(");
         Debug.LogError("Here's some debug information:");
         Debug.LogError(error.GenerateErrorReport());
+    }
+
+    // Tallentaa Login-lomakkeelta tulleen salasanan
+    public void  GetUserPasswordLogin(string passwordIn)
+    {
+        UserPasswordLogin = passwordIn;
+    }
+
+    // Tallentaa Login-lomakkeelta tulleen  sähköpostiosoitteen
+
+    public void GetUserEmailLogin(string emailIn)
+    {
+        UserEmailLogin = emailIn;
+    }
+
+    // Login -painikkeen koodi eli tässä tehdään API-kuts Playfab pilveen ja selvitetään onko käyttäjä olemassa
+    public void Login()
+    {
+        var request = new LoginWithEmailAddressRequest { Email = UserEmailLogin, Password = UserPasswordLogin };
+        PlayFabClientAPI.LoginWithEmailAddress(request, OnLoginSuccess, OnLoginFailure);
+
     }
 }
